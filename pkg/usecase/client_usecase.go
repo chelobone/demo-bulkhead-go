@@ -10,7 +10,7 @@ import (
 type IClientUsecase interface {
 	FindClientById(ctx context.Context, clientID int) (*model.Client, error)
 	FindClients(ctx context.Context, config *model.QueryConfig) (model.ClientSlice, error)
-	CreateClient(ctx context.Context, config *model.Client) (int, error)
+	CreateClient(ctx context.Context, config *model.Client) (*model.Result, error)
 }
 
 func NewClientUsecase(ss service.IClientService) IClientUsecase {
@@ -40,8 +40,11 @@ func (cu *clientUsecase) FindClients(ctx context.Context, config *model.QueryCon
 	return sSlice, err
 }
 
-func (cu *clientUsecase) CreateClient(ctx context.Context, client *model.Client) (int, error) {
+func (cu *clientUsecase) CreateClient(ctx context.Context, client *model.Client) (*model.Result, error) {
 	result, err := cu.cs.CreateClient(ctx, model.ClientFromUseCaseModel(client))
 
-	return result, err
+	var ResponseClient *model.ClientResult = &model.ClientResult{ID: result}
+	var clientInfo *model.Result = &model.Result{ResponseClient: ResponseClient}
+
+	return clientInfo, err
 }

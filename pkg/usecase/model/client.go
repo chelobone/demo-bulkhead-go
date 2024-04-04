@@ -49,3 +49,11 @@ func ClientFromDomainModel(m *model.Client) *Client {
 
 	return s
 }
+
+type Result struct {
+	ResponseClient *ClientResult
+}
+
+type ClientResult struct {
+	ID int
+}

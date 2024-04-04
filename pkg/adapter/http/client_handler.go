@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -70,14 +71,17 @@ func (ch *clientHandler) CreateClient() echo.HandlerFunc {
 		err := dec.Decode(clientInfo)
 
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
+			log.Println(err.Error())
+			return c.JSON(http.StatusBadRequest, "La estructura del body no es correcta.")
 		}
 
 		client, err := ch.usecase.CreateClient(ctx, clientInfo)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, err.Error())
+			log.Println(err.Error())
+			return c.JSON(http.StatusInternalServerError, "Ocurrió un error al ejecutar el procedimiento, favor revise los logs")
 		}
+
 		return c.JSON(http.StatusOK, client)
 	}
 }
