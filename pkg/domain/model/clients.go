@@ -14,3 +14,8 @@ type QueryConfig struct {
 	PageSize int
 	Page     int
 }
+
+type Result struct {
+	statusCode string
+	message    string
+}

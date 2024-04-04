@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -17,6 +18,7 @@ type ClientConfig struct {
 	GetById    string
 	GetAll     string
 	PostClient string
+	MaxRetries int
 }
 type HTTPInfo struct {
 	Addr string
@@ -53,10 +55,15 @@ func LoadConfig() *appConfig {
 		MySQLDBName:   mysqlDBName,
 	}
 
+	val, err := strconv.ParseInt(os.Getenv("MAX_RETRIES"), 10, 32)
+	if err != nil {
+		log.Fatalln("Parámetro no válido: MAX_RETRIES")
+	}
 	clientInfo := &ClientConfig{
 		GetById:    os.Getenv("MYSQL_SP_GET_CLIENTBYID"),
 		GetAll:     os.Getenv("MYSQL_SP_GET_CLIENTS"),
 		PostClient: os.Getenv("MYSQL_SP_POST_CLIENT"),
+		MaxRetries: int(val),
 	}
 
 	conf := appConfig{
