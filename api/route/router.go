@@ -1,12 +1,13 @@
-package http
+package route
 
 import (
 	"fmt"
 
-	"github.com/chelobone/demo_bulkhead_go/pkg/infra"
-	"github.com/chelobone/demo_bulkhead_go/pkg/infra/mysql"
-	"github.com/chelobone/demo_bulkhead_go/pkg/service"
-	"github.com/chelobone/demo_bulkhead_go/pkg/usecase"
+	"github.com/chelobone/demo_bulkhead_go/api/controller"
+	"github.com/chelobone/demo_bulkhead_go/infra"
+	"github.com/chelobone/demo_bulkhead_go/infra/mysql"
+	"github.com/chelobone/demo_bulkhead_go/service"
+	"github.com/chelobone/demo_bulkhead_go/usecase"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -16,8 +17,8 @@ const (
 	healthCheckRoot = "/health_chek"
 
 	//client
-	clientsAPIRoot = apiVersion + "/clients"
-	clientIDParam  = "clientID"
+	clientsAPIRoot = apiVersion + "/customer"
+	clientIDParam  = "customerReference"
 )
 
 func InitRouter() *echo.Echo {
@@ -31,7 +32,7 @@ func InitRouter() *echo.Echo {
 	healthCheckGroup := e.Group(healthCheckRoot)
 	{
 		relativePath := ""
-		healthCheckGroup.GET(relativePath, healthCheck)
+		healthCheckGroup.GET(relativePath, controller.NewHealthCheck)
 	}
 
 	mySQLConn := infra.NewMySQLConnector()
@@ -42,15 +43,15 @@ func InitRouter() *echo.Echo {
 
 	clientGroup := e.Group(clientsAPIRoot)
 	{
-		handler := NewClientHandler(clientUsecase)
-		// v1/clients?page=1&pageSize=10
-		relativePath := "" //fmt.Sprintf("/:%s/:%s", pageParam, pageSizeParam)
+		handler := controller.NewClientHandler(clientUsecase)
+		// v1/customer?page=1&pageSize=10
+		relativePath := ""
 		clientGroup.GET(relativePath, handler.FindAllClients())
-		// v1/clients/{client_id}
+		// v1/customer/{customerReference}
 		relativePath = fmt.Sprintf("/:%s", clientIDParam)
 		clientGroup.GET(relativePath, handler.FindClientById())
 
-		// v1/students/
+		// v1/customer/
 		relativePath = ""
 		clientGroup.POST(relativePath, handler.CreateClient())
 	}
