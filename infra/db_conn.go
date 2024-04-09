@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/chelobone/demo_bulkhead_go/pkg/config"
+	"github.com/chelobone/demo_bulkhead_go/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -22,7 +22,7 @@ func NewMySQLConnector() *MySQLConnector {
 
 	dsn := mysqlConnInfo(*conf.MySQLInfo)
 	log.Println(dsn)
-	//conn, err := sql.Open(driverName, dsn)
+
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
